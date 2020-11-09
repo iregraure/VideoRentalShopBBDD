@@ -21,6 +21,6 @@ public interface CustomerRepository extends CrudRepository<Customer, Integer>{
 	public Customer findCustomerById(int id);
 	
 	// Get de todos los customer ordenado por nombre
-	@Query(value = "select * from customer order by full_name", nativeQuery = true)
+	@Query(value = "select * from Customer order by fullName", nativeQuery = true)
 	public List<Customer> findAllOrderedByName();
 }

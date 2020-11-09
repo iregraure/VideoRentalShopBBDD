@@ -1,7 +1,6 @@
 package com.jacaranda.entity;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,15 +13,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class Rental implements Serializable {
 	
-	// Constantes
-	private final int DIAS_ALQUILER = 3;
-	
 	// Atributos
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
 	private double price;
@@ -35,7 +33,8 @@ public class Rental implements Serializable {
 	@JoinColumn(name="customerId", foreignKey = @ForeignKey(name="FK_CUSTOMER_RENTAL"))
 	private Customer customer;
 	
-	@ManyToMany(mappedBy="rentals")
+	@JsonIgnoreProperties(value="rentals")
+	@ManyToMany(mappedBy = "rentals")
 	private List<Film> films;
 	
 	// Constructor
@@ -44,13 +43,13 @@ public class Rental implements Serializable {
 		films = new ArrayList<Film>();
 	}
 
-	public Rental(double price, String startDate, String dueDate, Customer customer) throws ParseException {
+	public Rental(double price, String startDate, String dueDate, Customer customer, List<Film> films) {
 		super();
 		this.price = price;
 		this.startDate = startDate;
 		this.dueDate = dueDate;
 		this.customer = customer;
-		films = new ArrayList<Film>();
+		this.films = films;
 	}
 
 	// Métodos get y set
@@ -66,6 +65,10 @@ public class Rental implements Serializable {
 		return customer;
 	}
 
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -78,9 +81,8 @@ public class Rental implements Serializable {
 		return films;
 	}
 
-	@Override
-	public String toString() {
-		return "{\n\tid : " + id + "\n\tprice : " + price + "\n\tstartDate : " + startDate
-				+ "\n\tdueDate : " + dueDate + "\n\tcustomer : " + customer + "\n\tfilms : " + films + "\n}";
+	public void setFilms(List<Film> films) {
+		this.films = films;
 	}
+
 }

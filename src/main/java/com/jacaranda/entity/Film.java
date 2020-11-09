@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -18,12 +17,14 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
-public class Film implements Serializable, Comparable<Film> {
+public class Film implements Serializable {
 	
 	// Atributos
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
 	private String originalTitle;
@@ -39,16 +40,18 @@ public class Film implements Serializable, Comparable<Film> {
 	private boolean rented;
 	
 	private int duration;
-	
-	@ManyToOne
+
 	@JoinColumn(name="categoryId", foreignKey = @ForeignKey(name="FK_CATEGORY_FILM"))
+	@ManyToOne
 	private Category category;
 	
+	@JsonIgnoreProperties(value="films")
+	@ManyToMany(fetch = FetchType.LAZY,
+			targetEntity = Rental.class)
 	@JoinTable(
 			name = "film_rental",
 			joinColumns = @JoinColumn(name = "filmId", nullable = false, foreignKey = @ForeignKey(name="FK_FILM")),
 			inverseJoinColumns = @JoinColumn(name = "rentalId", nullable = false, foreignKey = @ForeignKey(name="FK_RENTAL")))
-	@ManyToMany(cascade = CascadeType.ALL)
 	private List<Rental> rentals;
 	
 	// Constructor
@@ -56,6 +59,7 @@ public class Film implements Serializable, Comparable<Film> {
 		super();
 		rented = false;
 		rentals = new ArrayList<Rental>();
+		actors = new ArrayList<String>();
 	}
 
 	public Film(String originalTitle, String spanishTitle, int year, List<String> actors, int duration, Category category) {
@@ -63,7 +67,7 @@ public class Film implements Serializable, Comparable<Film> {
 		this.originalTitle = originalTitle;
 		this.spanishTitle = spanishTitle;
 		this.year = year;
-		//this.actors = actors;
+		this.actors = actors;
 		this.duration = duration;
 		rented = false;
 		this.category = category;
@@ -86,13 +90,13 @@ public class Film implements Serializable, Comparable<Film> {
 		this.year = year;
 	}
 
-//	public List<String> getActors() {
-//		return actors;
-//	}
-//
-//	public void setActors(List<String> actors) {
-//		this.actors = actors;
-//	}
+	public List<String> getActors() {
+		return actors;
+	}
+
+	public void setActors(List<String> actors) {
+		this.actors = actors;
+	}
 
 	public boolean isRented() {
 		return rented;
@@ -130,20 +134,8 @@ public class Film implements Serializable, Comparable<Film> {
 		return rentals;
 	}
 
-	@Override
-	public int compareTo(Film f1) {
-		int resul = this.getOriginalTitle().compareTo(f1.getOriginalTitle());
-		if (resul == 0) {
-			resul = Integer.valueOf(this.getYear()).compareTo(f1.getYear());
-		}
-		return resul;
-	}
-
-	@Override
-	public String toString() {
-		return "{\n\tid: " + id + "\n\toriginalTitle: " + originalTitle + "\n\tspanishTitle: " + spanishTitle + "\n\tyear: "
-				+ year + "\n\tactors :" + /*actors +*/ "\n\trented :" + rented + "\n\tduration :" + duration + "\n\tcategory :"
-				+ category + "\n}";
+	public void setRentals(List<Rental> rentals) {
+		this.rentals = rentals;
 	}
 		
 }

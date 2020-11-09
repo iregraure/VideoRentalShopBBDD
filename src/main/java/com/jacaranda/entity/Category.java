@@ -3,6 +3,8 @@ package com.jacaranda.entity;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,9 +16,10 @@ public class Category implements Serializable {
 	
 	// Atributos
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
+	@Enumerated(EnumType.ORDINAL)
 	private CategoryType type;
 	
 	private String description;
@@ -47,11 +50,6 @@ public class Category implements Serializable {
 
 	public CategoryType getType() {
 		return type;
-	}
-
-	@Override
-	public String toString() {
-		return "{\n\tid : " + id + "\t\ntype : " + type + "\n\tdescription : " + description + "\n}";
 	}
 	
 }

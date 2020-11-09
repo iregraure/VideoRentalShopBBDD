@@ -8,11 +8,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Customer implements Serializable, Comparable<Customer> {
+public class Customer implements Serializable {
 
 	// Atributos
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
 	private String fullName;
@@ -81,17 +81,6 @@ public class Customer implements Serializable, Comparable<Customer> {
 
 	public int getId() {
 		return id;
-	}
-
-	public int compareTo(Customer c1) {
-		return this.getDni().compareTo(c1.getDni());
-	}
-
-	@Override
-	public String toString() {
-		return "{\n\tid : " + id + ", \n\tfullName : " + fullName + ",\n\taddress : " + address
-				+ ", \n\tphoneNumber : " + phoneNumber + ", \n\tbirthDate : " + birthDate + ", \n\tdni : "
-				+ dni + "\n}";
 	}
 
 }

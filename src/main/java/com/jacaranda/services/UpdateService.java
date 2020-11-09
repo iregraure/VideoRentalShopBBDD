@@ -18,7 +18,7 @@ public class UpdateService {
 	public void updateFilm(Film original, Film sent) {
 		original.setSpanishTitle((sent.getSpanishTitle() == null) ? original.getSpanishTitle() : sent.getSpanishTitle());
 		original.setYear((sent.getYear() == 0) ? original.getYear() : sent.getYear());
-		//original.setActors((sent.getActors() == null) ? original.getActors() : sent.getActors());
+		original.setActors((sent.getActors() == null) ? original.getActors() : sent.getActors());
 		original.setDuration((sent.getDuration() == 0) ? original.getDuration() : sent.getDuration());
 	}
 	
