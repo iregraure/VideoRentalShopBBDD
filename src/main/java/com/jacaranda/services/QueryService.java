@@ -18,8 +18,7 @@ public class QueryService {
 
 	// Método para buscar un rental por fecha de inicio y cliente
 	public Rental findRentalByDateAndCustomer(String date, int idClient) {
-		Query query = entityManager
-				.createNativeQuery("Select * from Rental where startDate like ?1 and customerId = ?2", Rental.class);
+		Query query = entityManager.createNativeQuery("Select * from Rental where startDate like ?1 and customerId = ?2", Rental.class);
 		query.setParameter(1, date);
 		query.setParameter(2, idClient);
 		Stream<Rental> rentals = query.getResultStream();

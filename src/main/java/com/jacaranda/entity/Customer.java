@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Customer implements Serializable {
@@ -24,6 +25,9 @@ public class Customer implements Serializable {
 	private String birthDate;
 	
 	private String dni;
+	
+	@OneToOne(targetEntity = File.class)
+	private File picture;
 
 	// Constructores
 	public Customer() {
@@ -81,6 +85,14 @@ public class Customer implements Serializable {
 
 	public int getId() {
 		return id;
+	}
+
+	public File getPicture() {
+		return picture;
+	}
+
+	public void setPicture(File picture) {
+		this.picture = picture;
 	}
 
 }
