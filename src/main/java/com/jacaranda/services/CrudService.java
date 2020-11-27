@@ -18,6 +18,8 @@ import com.jacaranda.repository.CustomerRepository;
 import com.jacaranda.repository.FilmRepository;
 import com.jacaranda.repository.RentalRepository;
 
+import javassist.NotFoundException;
+
 @Service
 public class CrudService {
 
@@ -37,7 +39,7 @@ public class CrudService {
 	// Servicios
 	@Autowired
 	private UpdateService updateService;
-	
+
 	@Autowired
 	private QueryService queryService;
 
@@ -89,17 +91,28 @@ public class CrudService {
 		return response;
 	}
 
-	public ResponseEntity<?> updateCustomer(int id, Customer sent) {
+	// SOLO PARA PROBAR
+	// Al acabar borrar y descomentar el siguente
+	public Customer updateCustomer(int id, Customer sent) throws NotFoundException {
 		Customer c = customerRepository.findCustomerById(id);
-		ResponseEntity<?> response;
 		if (c == null) {
-			response = ResponseEntity.notFound().build();
-		} else {
-			updateService.updateCustomer(c, sent);
-			response = ResponseEntity.ok(customerRepository.save(c));
+			throw new NotFoundException("Client doesn't exist");
 		}
-		return response;
+		updateService.updateCustomer(c, sent);
+		return c;
 	}
+
+//	public ResponseEntity<?> updateCustomer(int id, Customer sent) {
+//		Customer c = customerRepository.findCustomerById(id);
+//		ResponseEntity<?> response;
+//		if (c == null) {
+//			response = ResponseEntity.notFound().build();
+//		} else {
+//			updateService.updateCustomer(c, sent);
+//			response = ResponseEntity.ok(customerRepository.save(c));
+//		}
+//		return response;
+//	}
 
 	public ResponseEntity<?> deleteCustomer(int id) {
 		Customer c = customerRepository.findCustomerById(id);
@@ -322,5 +335,13 @@ public class CrudService {
 		}
 		return response;
 	}
-	
+
+	public void setCustomerRepository(CustomerRepository customerRepository) {
+		this.customerRepository = customerRepository;
+	}
+
+	public void setUpdateService(UpdateService updateService) {
+		this.updateService = updateService;
+	}
+
 }

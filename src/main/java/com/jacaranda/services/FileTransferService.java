@@ -26,6 +26,7 @@ public class FileTransferService extends AbstractServiceUtils {
 	private FileRepository fileRepository;
 
 	// Servicios
+	@Autowired
 	private FileHandlerService fhService;
 
 	// Método para guardar una foto del cliente
@@ -71,5 +72,8 @@ public class FileTransferService extends AbstractServiceUtils {
 		}
 		return response;
 	}
+	
+	// Método para comprimir un fichero
+	
 
 }

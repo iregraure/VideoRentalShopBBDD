@@ -1,5 +1,6 @@
 package com.jacaranda.controller;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,7 @@ public class CustomerController {
 	
 	// Añadir una foto
 	@PutMapping(path = "/customer/{id}/picture")
-	public ResponseEntity<?> addPicture(@PathVariable int id, @RequestParam MultipartFile mpf) {
+	public ResponseEntity<?> addPicture(@PathVariable int id, @RequestParam MultipartFile mpf) throws IOException {
 		return ftService.addPicture(mpf, id);
 	}
 

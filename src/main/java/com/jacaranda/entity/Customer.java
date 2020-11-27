@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Customer implements Serializable {
 
@@ -27,6 +29,7 @@ public class Customer implements Serializable {
 	private String dni;
 	
 	@OneToOne(targetEntity = File.class)
+	@JsonIgnore
 	private File picture;
 
 	// Constructores
