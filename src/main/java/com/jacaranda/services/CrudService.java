@@ -1,12 +1,9 @@
 package com.jacaranda.services;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.jacaranda.entity.Category;
@@ -18,10 +15,9 @@ import com.jacaranda.repository.CustomerRepository;
 import com.jacaranda.repository.FilmRepository;
 import com.jacaranda.repository.RentalRepository;
 
-import javassist.NotFoundException;
-
 @Service
-public class CrudService {
+public class CrudService
+{
 
 	// Repositorios
 	@Autowired
@@ -46,301 +42,282 @@ public class CrudService {
 	/*
 	 * MÉTODOS PARA CUSTOMER
 	 */
-	public ResponseEntity<?> getAllCustomer() {
-		Iterable<Customer> resul = customerRepository.findAll();
-		ResponseEntity<?> response;
-		if (((Collection<?>) resul).size() == 0) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("There are no customers");
-		} else {
-			response = ResponseEntity.ok(resul);
+	public List<Customer> getAllCustomer() throws Exception
+	{
+		List<Customer> resul = (List<Customer>) customerRepository.findAll();
+		if (resul.size() == 0)
+		{
+			throw new Exception("There are no customers");
 		}
-		return response;
+		return resul;
 	}
 
-	public ResponseEntity<?> getAllCustomerOrdered() {
-		Iterable<Customer> resul = customerRepository.findAllOrderedByName();
-		ResponseEntity<?> response;
-		if (((Collection<?>) resul).size() == 0) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("There are no customers");
-		} else {
-			response = ResponseEntity.ok(resul);
+	public List<Customer> getAllCustomerOrdered() throws Exception
+	{
+		List<Customer> resul = (List<Customer>) customerRepository.findAllOrderedByName();
+		if (resul.size() == 0)
+		{
+			throw new Exception("There are no customers");
 		}
-		return response;
+		return resul;
 	}
 
-	public ResponseEntity<?> getCustomerByName(String name) {
-		List<Customer> customers = customerRepository.findCustomerByFullName(name);
-		ResponseEntity<?> response;
-		if (customers.isEmpty()) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("There are no customers which name is " + name);
-		} else {
-			response = ResponseEntity.ok(customers);
+	public List<Customer> getCustomerByName(String name) throws Exception
+	{
+		List<Customer> customers= customerRepository.findCustomerByFullName(name);
+		if (customers.size() == 0)
+		{
+			throw new Exception("Customer doesn't exist");
 		}
-		return response;
+		return customers;
 	}
 
-	public ResponseEntity<?> addCustomer(Customer sent) {
+	public Customer addCustomer(Customer sent) throws Exception
+	{
 		String dniSent = sent.getDni();
-		Customer c = customerRepository.findCustomerByDni(dniSent);
-		ResponseEntity<?> response;
-		if (c == null) {
-			response = ResponseEntity.ok(customerRepository.save(sent));
-		} else {
-			response = ResponseEntity.badRequest().body("Customer already exists");
+		Customer customer = customerRepository.findCustomerByDni(dniSent);
+		if (customer != null)
+		{
+			throw new Exception("Customer already exists");
 		}
-		return response;
+		customerRepository.save(customer);
+		return customer;
 	}
 
-	// SOLO PARA PROBAR
-	// Al acabar borrar y descomentar el siguente
-	public Customer updateCustomer(int id, Customer sent) throws NotFoundException {
-		Customer c = customerRepository.findCustomerById(id);
-		if (c == null) {
-			throw new NotFoundException("Client doesn't exist");
+	public Customer updateCustomer(int id, Customer sent) throws Exception
+	{
+		Customer customer = customerRepository.findCustomerById(id);
+		if (customer == null)
+		{
+			throw new Exception("Client doesn't exist");
 		}
-		updateService.updateCustomer(c, sent);
+		updateService.updateCustomer(customer, sent);
+		customerRepository.save(customer);
+		return customer;
+	}
+
+	public Customer deleteCustomer(int id) throws Exception
+	{
+		Customer c = customerRepository.findCustomerById(id);
+		if (c == null)
+		{
+			throw new Exception("Customer doesn't exist");
+		}
+		customerRepository.delete(c);
 		return c;
-	}
-
-//	public ResponseEntity<?> updateCustomer(int id, Customer sent) {
-//		Customer c = customerRepository.findCustomerById(id);
-//		ResponseEntity<?> response;
-//		if (c == null) {
-//			response = ResponseEntity.notFound().build();
-//		} else {
-//			updateService.updateCustomer(c, sent);
-//			response = ResponseEntity.ok(customerRepository.save(c));
-//		}
-//		return response;
-//	}
-
-	public ResponseEntity<?> deleteCustomer(int id) {
-		Customer c = customerRepository.findCustomerById(id);
-		ResponseEntity<?> response;
-		if (c == null) {
-			response = ResponseEntity.notFound().build();
-		} else {
-			customerRepository.deleteById(id);
-			response = ResponseEntity.ok("Customer deleted");
-		}
-		return response;
 	}
 
 	/*
 	 * MÉTODOS PARA CATEGORY
 	 */
-	public ResponseEntity<?> getAllCategory() {
-		Iterable<Category> resul = categoryRepository.findAll();
-		ResponseEntity<?> response;
-		if (((Collection<?>) resul).size() == 0) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("There are no categories");
-		} else {
-			response = ResponseEntity.ok(resul);
+	public List<Category> getAllCategory() throws Exception
+	{
+		List<Category> resul = (List<Category>) categoryRepository.findAll();
+		if (resul.size() == 0)
+		{
+			throw new Exception("There are no categories");
 		}
-		return response;
+		return resul;
 	}
 
-	public ResponseEntity<?> getCategoryById(int id) {
+	public Category getCategoryById(int id) throws Exception
+	{
 		Category c = categoryRepository.findCategoryById(id);
-		ResponseEntity<?> response;
-		if (c == null) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category doesn't exist");
-		} else {
-			response = ResponseEntity.ok(c);
+		if (c == null)
+		{
+			throw new Exception("Category doesn't exist");
 		}
-		return response;
+		return c;
 	}
 
-	public ResponseEntity<?> addCategory(Category sent) {
+	public Category addCategory(Category sent) throws Exception
+	{
 		Category c = categoryRepository.findCategoryByType(sent.getType());
-		ResponseEntity<?> response;
-		if (c == null) {
-			response = ResponseEntity.ok(categoryRepository.save(sent));
-		} else {
-			response = ResponseEntity.badRequest().body("Category already exists");
+		if (c != null)
+		{
+			throw new Exception("Category already exists");
 		}
-		return response;
+		categoryRepository.save(sent);
+		return c;
 	}
 
-	public ResponseEntity<?> deleteCategory(int id) {
+	public Category deleteCategory(int id) throws Exception
+	{
 		Category c = categoryRepository.findCategoryById(id);
-		ResponseEntity<?> response;
-		if (c == null) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category doesn't exist");
-		} else {
-			categoryRepository.deleteById(id);
-			response = ResponseEntity.ok("Category deleted");
+		if (c == null)
+		{
+			throw new Exception("Category doesn't exist");
 		}
-		return response;
+		categoryRepository.deleteById(id);
+		return c;
 	}
 
 	/*
 	 * MÉTODOS PARA FILM
 	 */
-	public ResponseEntity<?> getAllFilms() {
-		Iterable<Film> resul = filmRepository.findAll();
-		ResponseEntity<?> response;
-		if (((Collection<?>) resul).size() == 0) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("There are no movies");
-		} else {
-			response = ResponseEntity.ok(resul);
+	public List<Film> getAllFilms() throws Exception
+	{
+		List<Film> resul = (List<Film>) filmRepository.findAll();
+		if (resul.size() == 0)
+		{
+			throw new Exception("There are no movies");
 		}
-		return response;
+		return resul;
 	}
 
-	public ResponseEntity<?> getFilmsOrdered(String param) {
-		Iterable<Film> resul = filmRepository.findAll();
-		ResponseEntity<?> response;
-		if (((Collection<?>) resul).size() == 0) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("There are no movies");
-		} else {
-			if (param.equalsIgnoreCase("originalTitle")) {
-				resul = filmRepository.findAllOrderedByOriginalTitle();
-			} else if (param.equalsIgnoreCase("year")) {
-				resul = filmRepository.findAllOrderedByYear();
-			}
-			response = ResponseEntity.ok(resul);
+	public List<Film> getFilmsOrdered(String param) throws Exception
+	{
+		List<Film> resul = (List<Film>) filmRepository.findAll();
+		if (resul.size() == 0)
+		{
+			throw new Exception("There are no movies");
 		}
-		return response;
+		if (param.equalsIgnoreCase("originalTitle"))
+		{
+			resul = filmRepository.findAllOrderedByOriginalTitle();
+		}
+		else if (param.equalsIgnoreCase("year"))
+		{
+			resul = filmRepository.findAllOrderedByYear();
+		}
+		return resul;
 	}
 
-	public ResponseEntity<?> getFilmById(int id) {
+	public Film getFilmById(int id) throws Exception
+	{
 		Film f = filmRepository.findFilmById(id);
-		ResponseEntity<?> response;
-		if (f == null) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movie doesn't exist");
-		} else {
-			response = ResponseEntity.ok(f);
+		if (f == null)
+		{
+			throw new Exception("Movie doesn't exist");
 		}
-		return response;
+		return f;
 	}
 
-	public ResponseEntity<?> addFilm(Film sent) {
+	public Film addFilm(Film sent) throws Exception
+	{
 		String titleSent = sent.getOriginalTitle();
 		Film f = filmRepository.findFilmByOriginalTitle(titleSent);
-		ResponseEntity<?> response;
-		if (f == null) {
-			int idCategory = sent.getCategory().getId();
-			Category catSent = categoryRepository.findCategoryById(idCategory);
-			if (catSent == null) {
-				response = ResponseEntity.badRequest().body("The category of the film doesn't exist");
-			} else {
-				sent.setCategory(catSent);
-				response = ResponseEntity.ok(filmRepository.save(sent));
-			}
-		} else {
-			response = ResponseEntity.badRequest().body("Film already exists");
+		if (f != null)
+		{
+			throw new Exception("Film already exists");
 		}
-		return response;
+		int idCategory = sent.getCategory().getId();
+		Category catSent = categoryRepository.findCategoryById(idCategory);
+		if (catSent == null)
+		{
+			throw new Exception("The category of the film doesn't exist");
+		}
+		sent.setCategory(catSent);
+		filmRepository.save(sent);
+		return sent;
 	}
 
-	public ResponseEntity<?> updateFilm(int id, Film sent) {
+	public Film updateFilm(int id, Film sent) throws Exception
+	{
 		Film f = filmRepository.findFilmById(id);
-		ResponseEntity<?> response;
-		if (f == null) {
-			response = ResponseEntity.notFound().build();
-		} else {
-			updateService.updateFilm(f, sent);
-			response = ResponseEntity.ok(filmRepository.save(f));
+		if (f == null)
+		{
+			throw new Exception("Film doesn't exist");
 		}
-		return response;
+		updateService.updateFilm(f, sent);
+		filmRepository.save(f);
+
+		return f;
 	}
 
-	public ResponseEntity<?> deleteFilm(int id) {
+	public Film deleteFilm(int id) throws Exception
+	{
 		Film f = filmRepository.findFilmById(id);
-		ResponseEntity<?> response;
-		if (f == null) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Film doesn't exist");
-		} else {
-			filmRepository.deleteById(id);
-			response = ResponseEntity.ok("Film deleted");
+		if (f == null)
+		{
+			throw new Exception("Film doesn't exist");
 		}
-		return response;
+		filmRepository.deleteById(id);
+		return f;
 	}
 
 	/*
 	 * MÉTODOS PARA RENTAL
 	 */
 
-	public ResponseEntity<?> getAllRental() {
-		Iterable<Rental> resul = rentalRepository.findAll();
-		ResponseEntity<?> response;
-		if (((Collection<?>) resul).size() == 0) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("There are no rentals");
-		} else {
-			response = ResponseEntity.ok(resul);
+	public List<Rental> getAllRental() throws Exception
+	{
+		List<Rental> resul = (List<Rental>) rentalRepository.findAll();
+		if (resul.size() == 0)
+		{
+			throw new Exception("There are no rentals");
 		}
-		return response;
+		return resul;
 	}
 
-	public ResponseEntity<?> getRentalById(int id) {
+	public Rental getRentalById(int id) throws Exception
+	{
 		Rental r = rentalRepository.findRentalById(id);
-		ResponseEntity<?> response;
-		if (r == null) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rental doesn't exist");
-		} else {
-			response = ResponseEntity.ok(r);
+		if (r == null)
+		{
+			throw new Exception("Rental doesn't exist");
 		}
-		return response;
+		return r;
 	}
 
-	public ResponseEntity<?> getRentalByCustomerId(int id) {
+	public List<Rental> getRentalByCustomerId(int id) throws Exception
+	{
 		Customer customerSent = customerRepository.findCustomerById(id);
-		ResponseEntity<?> response;
-		if (customerSent == null) {
-			response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer doesn't exist");
-		} else {
-			List<Rental> rentals = rentalRepository.findRentalByCustomer(customerSent);
-			if (rentals == null) {
-				response = ResponseEntity.status(HttpStatus.NOT_FOUND)
-						.body("There are no rentals for the customer with id " + customerSent.getId());
-			} else {
-				response = ResponseEntity.ok(rentals);
-			}
+		if (customerSent == null)
+		{
+			throw new Exception("Customer doesn't exist");
 		}
-		return response;
+		List<Rental> rentals = rentalRepository.findRentalByCustomer(customerSent);
+		if (rentals == null)
+		{
+			throw new Exception("There are no rentals for the customer with id " + customerSent.getId());
+		}
+		return rentals;
 	}
 
-	public ResponseEntity<?> addRental(Rental sent) {
+	public Rental addRental(Rental sent) throws Exception
+	{
 		String dateSent = sent.getStartDate();
 		int idClientSent = sent.getCustomer().getId();
 		Rental r = queryService.findRentalByDateAndCustomer(dateSent, idClientSent);
-		ResponseEntity<?> response;
-		if (r == null) {
-			int idCustomer = sent.getCustomer().getId();
-			Customer customerSent = customerRepository.findCustomerById(idCustomer);
-			if (customerSent == null) {
-				response = ResponseEntity.badRequest().body("The customer of the rental doesn't exist");
-			} else {
-				sent.setCustomer(customerSent);
-				List<Film> filmsComplete = new ArrayList<Film>();
-				List<Film> films = sent.getFilms();
-				for (Film film : films) {
-					int idFilm = film.getId();
-					Film filmComplete = filmRepository.findFilmById(idFilm);
-					filmsComplete.add(filmComplete);
-				}
-				sent.setFilms(filmsComplete);
-				films = sent.getFilms();
-				for (Film film : films) {
-					List<Rental> rentals = film.getRentals();
-					rentals.add(sent);
-					film.setRentals(rentals);
-					film.setRented(true);
-				}
-				response = ResponseEntity.ok(rentalRepository.save(sent));
-			}
-		} else {
-			response = ResponseEntity.badRequest().body("Rental already exists");
+		if (r != null)
+		{
+			throw new Exception("Rental already exists");
 		}
-		return response;
+		Customer customerSent = customerRepository.findCustomerById(idClientSent);
+		if (customerSent == null)
+		{
+			throw new Exception("The customer of the rental doesn't exist");
+		}
+		sent.setCustomer(customerSent);
+		List<Film> filmsComplete = new ArrayList<Film>();
+		List<Film> films = sent.getFilms();
+		for (Film film : films)
+		{
+			int idFilm = film.getId();
+			Film filmComplete = filmRepository.findFilmById(idFilm);
+			filmsComplete.add(filmComplete);
+		}
+		sent.setFilms(filmsComplete);
+		films = sent.getFilms();
+		for (Film film : films)
+		{
+			List<Rental> rentals = film.getRentals();
+			rentals.add(sent);
+			film.setRentals(rentals);
+			film.setRented(true);
+		}
+		rentalRepository.save(sent);
+		return sent;
 	}
 
-	public void setCustomerRepository(CustomerRepository customerRepository) {
+	public void setCustomerRepository(CustomerRepository customerRepository)
+	{
 		this.customerRepository = customerRepository;
 	}
 
-	public void setUpdateService(UpdateService updateService) {
+	public void setUpdateService(UpdateService updateService)
+	{
 		this.updateService = updateService;
 	}
 

@@ -2,6 +2,8 @@ package com.jacaranda.services;
 
 import static org.mockito.Mockito.mock;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -29,7 +31,7 @@ class UpdateCustomerTest {
 		// mocking dependencies
 		mockedCustomerRepo = mock(CustomerRepository.class);
 		mockedUpdateService = mock(UpdateService.class);
-		//mockedCustomer = mock(Customer.class);
+		mockedCustomer = mock(Customer.class);
 		// set dependencies into sut
 		sut.setCustomerRepository(mockedCustomerRepo);
 		sut.setUpdateService(mockedUpdateService);
@@ -40,7 +42,7 @@ class UpdateCustomerTest {
 		try
 		{
 			// Behavior
-			Mockito.when(mockedCustomerRepo.findCustomerById(Mockito.any())).thenReturn(null);
+			Mockito.when(mockedCustomerRepo.findCustomerById(Mockito.anyInt())).thenReturn(null);
 			// Call
 			sut.updateCustomer(2, mockedCustomer);
 		}
@@ -60,9 +62,10 @@ class UpdateCustomerTest {
 	{
 		try
 		{
-			// mock
-			mockedCustomer = mock(Customer.class);
-			
+			// Behavior
+			Mockito.when(mockedCustomerRepo.findCustomerById(Mockito.anyInt())).thenReturn(mockedCustomer);
+			// Call
+			assert(mockedCustomer == sut.updateCustomer(2, mockedCustomer));
 		}
 		catch (Exception e)
 		{
